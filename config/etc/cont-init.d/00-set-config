@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv sh
+
+cat << EOF > /etc/fluentd/fluent.conf
+<source>
+  @type  forward
+  @id   input
+  port  24224
+</source>
+
+<match **>
+  @type google_cloud
+  buffer_chunk_limit 1M
+  flush_interval 5s
+  disable_retry_limit false
+  retry_limit 3
+  retry_wait 10s
+  max_retry_wait 300
+  num_threads 8
+  use_grpc true
+  partial_success true
+  enable_monitoring false
+  monitoring_type prometheus
+  autoformat_stackdriver_trace true
+</match>
+
+EOF
